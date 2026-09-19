@@ -9,3 +9,6 @@ whisper_server.exe
 
 .vscode
 __pycache__
+
+VoiceAttackPlugin/WhisperAttack/bin
+VoiceAttackPlugin/WhisperAttack/obj
