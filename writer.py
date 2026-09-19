@@ -1,5 +1,5 @@
 from tkinter import NORMAL, DISABLED, END
-from ttkbootstrap.scrolled import ScrolledText
+from ttkbootstrap.widgets.scrolled import ScrolledText
 from theme import TAG_BLACK, TAG_BLUE, TAG_GREEN, TAG_GREY, TAG_ORANGE, TAG_RED, theme_config
 
 class WhisperAttackWriter:
