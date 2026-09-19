@@ -11,6 +11,7 @@ namespace WhisperAttackServerCommand
 {
     public class VA_Plugin
     {
+        private const int DefaultServerPort = 65432;
         private static bool _isRunning = true;
         private static TcpListener _listener = null;
 
@@ -36,7 +37,7 @@ namespace WhisperAttackServerCommand
         public static void VA_Init1(dynamic vaProxy)
         {
             string server = "127.0.0.1"; // Localhost
-            int port = 65432; // Port of the Python server
+            int port = GetServerPort();
 
             try
             {
@@ -58,7 +59,7 @@ namespace WhisperAttackServerCommand
         public static void VA_Invoke1(dynamic vaProxy)
         {
             string server = "127.0.0.1";
-            int port = 65432;
+            int port = GetServerPort();
 
             string contextinput = vaProxy.Context;
 
@@ -101,7 +102,7 @@ namespace WhisperAttackServerCommand
             _listener.Stop();
 
             string server = "127.0.0.1";
-            int port = 65432;
+            int port = GetServerPort();
 
             using (TcpClient client = new TcpClient(server, port))
             using (NetworkStream stream = client.GetStream())
@@ -110,6 +111,49 @@ namespace WhisperAttackServerCommand
                 byte[] data = Encoding.ASCII.GetBytes(command);
                 stream.Write(data, 0, data.Length);
             }
+        }
+
+        private static int GetServerPort()
+        {
+            string settingsPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "WhisperAttack",
+                "settings.cfg");
+
+            if (!File.Exists(settingsPath))
+            {
+                return DefaultServerPort;
+            }
+
+            try
+            {
+                foreach (string line in File.ReadLines(settingsPath))
+                {
+                    string setting = line.Trim();
+                    if (setting.Length == 0 || setting.StartsWith("#"))
+                    {
+                        continue;
+                    }
+
+                    string[] parts = setting.Split(new[] { '=' }, 2);
+                    if (parts.Length == 2
+                        && parts[0].Trim().Equals("server_port", StringComparison.OrdinalIgnoreCase)
+                        && int.TryParse(parts[1].Trim(), out int port)
+                        && port > 0
+                        && port <= 65535)
+                    {
+                        return port;
+                    }
+                }
+            }
+            catch (IOException)
+            {
+            }
+            catch (UnauthorizedAccessException)
+            {
+            }
+
+            return DefaultServerPort;
         }
 
         private static async Task StartCommandListener(dynamic vaProxy)
