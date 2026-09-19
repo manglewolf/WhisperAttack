@@ -23,7 +23,6 @@ from theme import TAG_BLUE, TAG_GREEN, TAG_GREY, TAG_ORANGE, TAG_RED
 # CONFIG
 ###############################################################################
 HOST = '127.0.0.1'
-PORT = 65432
 
 # Library to convert textual numbers to their numerical values
 t2d = text2digits.Text2Digits()
@@ -199,6 +198,7 @@ class WhisperServer:
 
         self.voiceattack_host = self.config.get_voiceattack_host()
         self.voiceattack_port = self.config.get_voiceattack_port()
+        self.server_port = self.config.get_server_port()
 
     def load_whisper_model(self, config: WhisperAttackConfiguration) -> None:
         """
@@ -425,10 +425,10 @@ class WhisperServer:
         """
         self.load_whisper_model(self.config)
 
-        logging.info("Server started and listening on %s:%s", HOST, PORT)
-        self.writer.write(f"Server started and listening on {HOST}:{PORT}", TAG_GREEN)
+        logging.info("Server started and listening on %s:%s", HOST, self.server_port)
+        self.writer.write(f"Server started and listening on {HOST}:{self.server_port}", TAG_GREEN)
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.bind((HOST, PORT))
+            s.bind((HOST, self.server_port))
             s.listen()
             s.settimeout(1.0)
 

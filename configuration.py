@@ -206,6 +206,14 @@ class WhisperAttackConfiguration:
         """
         voiceattack_port = self.config.get("voiceattack_port", 65433)
         return int(voiceattack_port)
+
+    def get_server_port(self) -> int:
+        """
+        Returns the port number on which the WhisperAttack server listens.
+        Default is 65432.
+        """
+        server_port = self.config.get("server_port", 65432)
+        return int(server_port)
     
     def get_text_line_length(self) -> int:
         """

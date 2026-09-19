@@ -8,3 +8,4 @@ build
 whisper_server.exe
 
 .vscode
+__pycache__

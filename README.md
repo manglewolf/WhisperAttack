@@ -71,6 +71,7 @@ The default values should cover most cases but can be changed:
 - `whisper_model` - The Whisper model to use, `small.en` by default. See the table at the bottom of the README file for options.
   - A smaller size can be specified for reducing the amount of VRAM used, e.g. `base.en` or `tiny.en`
 - `whisper_device` - Which device to run the Whisper transcription process on, `GPU` (default) or `CPU`
+- `server_port` - Port on which WhisperAttack listens for commands from the VoiceAttack plugin, `65432` by default. If changed, update the same port in the VoiceAttack plugin.
 - `theme` - To display the WhisperAttack UI in light or dark mode. Valid values: 
   - `default` - this will use the current theme you have set for Windows
   - `dark` - dark mode
