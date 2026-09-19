@@ -6,3 +6,5 @@ dist
 build
 
 whisper_server.exe
+
+.vscode
