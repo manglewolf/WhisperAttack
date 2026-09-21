@@ -92,6 +92,12 @@ The `--noconsole` parameter means that when WhisperAttack is run no window is di
 pyinstaller --onedir --noconsole whisper_attack.py
 ```
 
+#### Update - use the spec file
+```console
+pyinstaller .\whisper_attack.spec --noconfirm
+```
+ With this spec file the copy files process does not need to be done.
+
 ### Packaging the application
 
 Copy the following files into the `dist\whisper_attack` directory as these must be located beside the executable
