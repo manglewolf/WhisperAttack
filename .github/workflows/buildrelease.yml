@@ -21,7 +21,6 @@ jobs:
 
       # -------------------------------------------------------------
       # 1. Build Both Projects
-      # Adjust directories and build commands to match your setup
       # -------------------------------------------------------------
       - name: Install dependencies for VoiceAttack Server
         run: |
@@ -52,8 +51,8 @@ jobs:
       # -------------------------------------------------------------
       - name: Archive dist and release directories
         run: |
-          zip -r WhisperAttackServer.zip dist/WhisperAttack
-          zip -r WhisperAttackPlugin.zip VoiceAttackPlugin/WhisperAttack/bin/net8.0/Release/net8.0/WhisperAttack.dll
+          cd dist/WhisperAttack && zip -r ../../WhisperAttackServer.zip .
+          zip -r -j WhisperAttackPlugin.zip VoiceAttackPlugin/WhisperAttack/bin/net8.0/Release/net8.0/WhisperAttack.dll
 
       # -------------------------------------------------------------
       # 3. Create Draft Release and Upload Assets
