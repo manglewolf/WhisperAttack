@@ -1,0 +1,69 @@
+name: Draft Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers on tag pushes like v1.0.0, v0.1.0-alpha, etc.
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
+
+jobs:
+  build-and-draft-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # -------------------------------------------------------------
+      # 1. Build Both Projects
+      # Adjust directories and build commands to match your setup
+      # -------------------------------------------------------------
+      - name: Install dependencies for VoiceAttack Server
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Syntax check for VoiceAttack Server
+        run: python -m py_compile whisper_attack.py
+
+      - name: Build VoiceAttack Server
+        run: |
+          pyinstaller .\whisper_attack.spec --noconfirm                                              
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore VoiceAttack Plugin dependencies
+        run: dotnet restore "VoiceAttackPlugin/WhisperAttack/WhisperAttack.csproj"
+
+      - name: Build VoiceAttack Plugin
+        run: dotnet build "VoiceAttackPlugin/WhisperAttack/WhisperAttack.csproj" --configuration Release --no-restore
+
+      # -------------------------------------------------------------
+      # 2. Package build outputs into zip archives
+      # Releases require distinct files (or archives) rather than folders
+      # -------------------------------------------------------------
+      - name: Archive dist and release directories
+        run: |
+          zip -r WhisperAttackServer.zip dist/WhisperAttack
+          zip -r WhisperAttackPlugin.zip VoiceAttackPlugin/WhisperAttack/bin/net8.0/Release/net8.0/WhisperAttack.dll
+
+      # -------------------------------------------------------------
+      # 3. Create Draft Release and Upload Assets
+      # -------------------------------------------------------------
+      - name: Create Release Draft
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: |
+            WhisperAttackServer.zip
+            WhisperAttackPlugin.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
